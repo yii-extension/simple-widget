@@ -12,6 +12,7 @@ use function get_class;
 
 /**
  * Widget generates a string content based on some logic and input data.
+ *
  * These are typically used in templates to conceal complex HTML rendering logic.
  *
  * This is the base class that is meant to be inherited when implementing your own widgets.
@@ -20,6 +21,7 @@ abstract class AbstractWidget
 {
     /**
      * The widgets that are currently opened and not yet closed.
+     *
      * This property is maintained by {@see begin()} and {@see end()} methods.
      *
      * @var array
@@ -43,8 +45,7 @@ abstract class AbstractWidget
     /**
      * Renders widget content.
      *
-     * This method is used by {@see render()} and is meant to be overridden
-     * when implementing concrete widget.
+     * This method is used by {@see render()} and is meant to be overridden when implementing concrete widget.
      */
     abstract protected function run(): string;
 
@@ -78,7 +79,7 @@ abstract class AbstractWidget
      *
      * @throws ReflectionException
      *
-     * @return $this widget instance
+     * @return object Widget instance.
      */
     final public static function widget(array $constructorArguments = []): object
     {
@@ -91,7 +92,7 @@ abstract class AbstractWidget
     /**
      * Executes the widget.
      *
-     * @return string the result of widget execution to be outputted.
+     * @return string The result of widget execution to be outputted.
      */
     final public function render(): string
     {
@@ -112,7 +113,7 @@ abstract class AbstractWidget
      * When overriding this method, make sure you call the parent implementation like the following:
      *
      * ```php
-     * public function beforeRun()
+     * protected function beforeRun()
      * {
      *     if (!parent::beforeRun()) {
      *         return false;
@@ -134,8 +135,7 @@ abstract class AbstractWidget
     /**
      * This method is invoked right after a widget is executed.
      *
-     * The return value of the method will be used as the widget
-     * return value.
+     * The return value of the method will be used as the widget return value.
      *
      * If you override this method, your code should look like the following:
      *
@@ -143,7 +143,9 @@ abstract class AbstractWidget
      * protected function afterRun($result)
      * {
      *     $result = parent::afterRun($result);
+     *
      *     // your custom code here
+     *
      *     return $result;
      * }
      * ```
