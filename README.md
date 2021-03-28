@@ -8,7 +8,7 @@
 
 [![Total Downloads](https://poser.pugx.org/yii-extension/simple-widget/downloads.png)](https://packagist.org/packages/yii-extension/simple-widget)
 [![Build Status](https://github.com/yii-extension/simple-widget/workflows/build/badge.svg)](https://github.com/yii-extension/simple-widget/actions?query=workflow%3Abuild)
-[![codecov](https://codecov.io/gh/yii-extension/simple-widget/branch/main/graph/badge.svg?token=gaUysTvoUu)](https://codecov.io/gh/yii-extension/simple-widget)
+[![codecov](https://codecov.io/gh/yii-extension/simple-widget/branch/master/graph/badge.svg?token=gaUysTvoUu)](https://codecov.io/gh/yii-extension/simple-widget)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyii-extension%2Fsimple-widget%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yii-extension/simple-widget/master)
 [![static analysis](https://github.com/yii-extension/simple-widget/workflows/static%20analysis/badge.svg)](https://github.com/yii-extension/simple-widget/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yii-extension/simple-widget/coverage.svg)](https://shepherd.dev/github/yii-extension/simple-widget)
