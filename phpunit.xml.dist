@@ -21,7 +21,7 @@
   </coverage>
 
   <testsuites>
-    <testsuite name="Template">
+    <testsuite name="simple-widget">
       <directory>./tests</directory>
     </testsuite>
   </testsuites>

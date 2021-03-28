@@ -1,9 +1,11 @@
 {
-    "name": "yii-extension/template",
+    "name": "yii-extension/simple-widget",
     "type": "library",
-    "description": "_____",
+    "description": "Simple widget for yii3.",
     "keywords": [
-        "_____"
+        "yii3",
+        "simple",
+        "widget"
     ],
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
@@ -14,16 +16,16 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "roave/infection-static-analysis-plugin": "^1.7",
-        "vimeo/psalm": "^4.3"
+        "vimeo/psalm": "^4.6"
     },
     "autoload": {
         "psr-4": {
-            "Template\\": "src"
+            "Yii\\Extension\\Simple\\Widget\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Template\\Tests\\": "tests"
+            "Yii\\Extension\\Simple\\Widget\\Tests\\": "tests"
         }
     },
     "extra": {
