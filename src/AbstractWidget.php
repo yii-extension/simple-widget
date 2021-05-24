@@ -79,9 +79,9 @@ abstract class AbstractWidget
      *
      * @throws ReflectionException
      *
-     * @return object Widget instance.
+     * @return static widget instance
      */
-    final public static function widget(array $constructorArguments = []): object
+    final public static function widget(array $constructorArguments = []): self
     {
         $widget = new ReflectionClass(static::class);
         $widget = $widget->newInstanceArgs($constructorArguments);
