@@ -61,7 +61,6 @@ abstract class AbstractWidget
             throw new RuntimeException("Unexpected {$class}::end() call. A matching begin() is not found.");
         }
 
-        /** @var static $widget */
         $widget = array_pop(self::$stack);
         $widgetClass = get_class($widget);
 
