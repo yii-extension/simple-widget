@@ -21,10 +21,9 @@ abstract class AbstractWidget
 {
     /**
      * The widgets that are currently opened and not yet closed.
-     *
      * This property is maintained by {@see begin()} and {@see end()} methods.
      *
-     * @var array
+     * @var static[]
      */
     private static array $stack;
 
@@ -56,17 +55,18 @@ abstract class AbstractWidget
      */
     final public static function end(): string
     {
+        $class = static::class;
+
         if (empty(self::$stack)) {
-            throw new RuntimeException(
-                'Unexpected ' . static::class . '::end() call. A matching begin() is not found.'
-            );
+            throw new RuntimeException("Unexpected {$class}::end() call. A matching begin() is not found.");
         }
 
         /** @var static $widget */
         $widget = array_pop(self::$stack);
+        $widgetClass = get_class($widget);
 
-        if (get_class($widget) !== static::class) {
-            throw new RuntimeException('Expecting end() of ' . get_class($widget) . ', found ' . static::class . '.');
+        if ($widgetClass !== static::class) {
+            throw new RuntimeException("Expecting end() of {$widgetClass} found {$class}.");
         }
 
         return $widget->render();
@@ -100,9 +100,7 @@ abstract class AbstractWidget
             return '';
         }
 
-        $result = $this->run();
-
-        return $this->afterRun($result);
+        return $this->afterRun($this->run());
     }
 
     /**
@@ -113,7 +111,7 @@ abstract class AbstractWidget
      * When overriding this method, make sure you call the parent implementation like the following:
      *
      * ```php
-     * protected function beforeRun()
+     * public function beforeRun(): bool
      * {
      *     if (!parent::beforeRun()) {
      *         return false;
@@ -125,7 +123,7 @@ abstract class AbstractWidget
      * }
      * ```
      *
-     * @return bool whether the widget should continue to be executed.
+     * @return bool Whether the widget should continue to be executed.
      */
     protected function beforeRun(): bool
     {
@@ -140,19 +138,17 @@ abstract class AbstractWidget
      * If you override this method, your code should look like the following:
      *
      * ```php
-     * protected function afterRun($result)
+     * public function afterRun(string $result): string
      * {
      *     $result = parent::afterRun($result);
-     *
      *     // your custom code here
-     *
      *     return $result;
      * }
      * ```
      *
-     * @param string $result the widget return result.
+     * @param string $result The widget return result.
      *
-     * @return string the processed widget result.
+     * @return string The processed widget result.
      */
     protected function afterRun(string $result): string
     {
@@ -163,7 +159,7 @@ abstract class AbstractWidget
      * Allows not to call `->render()` explicitly:
      *
      * ```php
-     * <?= MyWidget::widget()->name('test') ?>
+     * <?= MyWidget::widget(); ?>
      * ```
      */
     final public function __toString(): string
