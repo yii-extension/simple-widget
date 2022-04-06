@@ -28,6 +28,13 @@ abstract class SimpleWidget
     }
 
     /**
+     * Renders widget content.
+     *
+     * This method is used by {@see render()} and is meant to be overridden when implementing concrete widget.
+     */
+    abstract protected function run(): string;
+
+    /**
      * The widgets that are currently opened and not yet closed.
      * This property is maintained by {@see begin()} and {@see end()} methods.
      *
@@ -44,8 +51,9 @@ abstract class SimpleWidget
      */
     public function attributes(array $values): static
     {
-        $this->attributes = array_merge($this->attributes, $values);
-        return $this;
+        $new = clone $this;
+        $new->attributes = array_merge($this->attributes, $values);
+        return $new;
     }
 
     /**
@@ -58,38 +66,41 @@ abstract class SimpleWidget
     public function begin(): string
     {
         self::$stack[] = $this;
-
         return '';
     }
 
     /**
-     * Renders widget content.
-     *
-     * This method is used by {@see render()} and is meant to be overridden when implementing concrete widget.
+     * @psalm-suppress UnresolvableInclude
      */
-    abstract protected function run(): string;
+    public function loadConfigFile(string $path): static
+    {
+        $widget = $this;
+
+        try {
+            /** @var mixed */
+            $file = require $path;
+            $config = is_array($file) ? $file : [];
+            $widget = self::configure($widget, $config);
+        } catch (Throwable $e) {
+            throw new RuntimeException("Unable to load configuration file $path.");
+        }
+
+        /** @var static */
+        return $widget;
+    }
 
     /**
-     * Checks that the widget was opened with {@see begin()}. If so, runs it and returns content generated.
+     * Executes the widget.
      *
-     * @throws RuntimeException
+     * @return string The result of widget execution to be outputted.
      */
-    final public static function end(): string
+    final public function render(): string
     {
-        $class = static::class;
-
-        if (empty(self::$stack)) {
-            throw new RuntimeException("Unexpected $class::end() call. A matching begin() is not found.");
+        if (!$this->beforeRun()) {
+            return '';
         }
 
-        $widget = array_pop(self::$stack);
-        $widgetClass = get_class($widget);
-
-        if ($widgetClass !== static::class) {
-            throw new RuntimeException("Expecting end() of $widgetClass found $class.");
-        }
-
-        return $widget->render();
+        return $this->afterRun($this->run());
     }
 
     /**
@@ -118,38 +129,53 @@ abstract class SimpleWidget
     }
 
     /**
-     * @psalm-suppress UnresolvableInclude
+     * Checks that the widget was opened with {@see begin()}. If so, runs it and returns content generated.
+     *
+     * @throws RuntimeException
      */
-    public function loadConfigFile(string $path): static
+    final public static function end(): string
     {
-        $widget = $this;
+        $class = static::class;
 
-        try {
-            /** @var mixed */
-            $file = require $path;
-            $config = is_array($file) ? $file : [];
-            $widget = self::configure($widget, $config);
-        } catch (Throwable $e) {
-            throw new RuntimeException("Unable to load configuration file '$path'.");
+        if (empty(self::$stack)) {
+            throw new RuntimeException("Unexpected $class::end() call. A matching begin() is not found.");
         }
 
-        /** @var static */
-        return $widget;
+        $widget = array_pop(self::$stack);
+        $widgetClass = get_class($widget);
+
+        if ($widgetClass !== static::class) {
+            throw new RuntimeException("Expecting end() of $widgetClass found $class.");
+        }
+
+        return $widget->render();
     }
 
     /**
-     * Executes the widget.
+     * This method is invoked right after a widget is executed.
      *
-     * @return string The result of widget execution to be outputted.
+     * The return value of the method will be used as the widget return value.
+     *
+     * If you override this method, your code should look like the following:
+     *
+     * ```php
+     * public function afterRun(string $result): string
+     * {
+     *     $result = parent::afterRun($result);
+     *     // your custom code here
+     *     return $result;
+     * }
+     * ```
+     *
+     * @param string $result The widget return result.
+     *
+     * @return string The processed widget result.
      */
-    final public function render(): string
+    protected function afterRun(string $result): string
     {
-        if (!$this->beforeRun()) {
-            return '';
-        }
-
-        return $this->afterRun($this->run());
+        return $result;
     }
+
 
     /**
      * This method is invoked right before the widget is executed.
@@ -176,31 +202,6 @@ abstract class SimpleWidget
     protected function beforeRun(): bool
     {
         return true;
-    }
-
-    /**
-     * This method is invoked right after a widget is executed.
-     *
-     * The return value of the method will be used as the widget return value.
-     *
-     * If you override this method, your code should look like the following:
-     *
-     * ```php
-     * public function afterRun(string $result): string
-     * {
-     *     $result = parent::afterRun($result);
-     *     // your custom code here
-     *     return $result;
-     * }
-     * ```
-     *
-     * @param string $result The widget return result.
-     *
-     * @return string The processed widget result.
-     */
-    protected function afterRun(string $result): string
-    {
-        return $result;
     }
 
     /**
