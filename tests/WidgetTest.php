@@ -11,6 +11,7 @@ use Yii\Extension\Simple\Widget\Tests\Stubs\Immutable;
 use Yii\Extension\Simple\Widget\Tests\Stubs\Widget;
 use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetA;
 use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetB;
+use Yiisoft\Html\Html;
 
 final class WidgetTest extends TestCase
 {
@@ -119,6 +120,12 @@ final class WidgetTest extends TestCase
     {
         $output = Widget::create()->loadConfigFile(__DIR__ . '/Stubs/Config.php')->id('w0');
         $this->assertSame('<id="w0" class="text-danger">', $output->render());
+    }
+
+    public function testWidgetWithConstructor(): void
+    {
+        $output = Widget::create(['attributes()' => ['class' => 'test-class']], [new Html()])->id('w0');
+        $this->assertSame('<id="w0" class="test-class">', $output->render());
     }
 
     public function testWidgetWithImmutableWidget(): void
