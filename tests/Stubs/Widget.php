@@ -21,6 +21,13 @@ final class Widget extends SimpleWidget
         return $new;
     }
 
+    public function addAttribute(string $attribute, string $value): self
+    {
+        $new = clone $this;
+        $new->attributes[$attribute] = $value;
+        return $new;
+    }
+
     protected function beforeRun(): bool
     {
         if (isset($this->attributes['id']) && $this->attributes['id'] === 'beforerun') {

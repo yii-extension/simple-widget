@@ -235,7 +235,7 @@ abstract class SimpleWidget
             if (str_ends_with($action, '()')) {
                 // method call
                 /** @var mixed */
-                $setter = call_user_func_array([$widget, substr($action, 0, -2)], [$arguments]);
+                $setter = call_user_func_array([$widget, substr($action, 0, -2)], $arguments);
             }
         }
 
