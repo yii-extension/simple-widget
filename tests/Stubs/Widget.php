@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace Yii\Extension\Simple\Widget\Tests\Stubs;
 
 use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yiisoft\Html\Html;
 
-class TestWidget extends AbstractWidget
+final class Widget extends AbstractWidget
 {
-    private string $id;
-
     protected function run(): string
     {
-        return '<run-' . $this->id . '>';
+        return '<' . trim(html::renderTagAttributes($this->attributes)) . '>';
     }
 
     public function id(string $value): self
     {
-        $this->id = $value;
-
-        return $this;
+        $new = clone $this;
+        $new->attributes['id'] = $value;
+        return $new;
     }
 
     protected function beforeRun(): bool
     {
-        if ($this->id === 'beforerun') {
+        if (isset($this->attributes['id']) && $this->attributes['id'] === 'beforerun') {
             return false;
         }
 
@@ -35,7 +34,7 @@ class TestWidget extends AbstractWidget
     {
         $result = parent::afterRun($result);
 
-        if ($this->id === 'afterrun') {
+        if (isset($this->attributes['id']) && $this->attributes['id'] === 'afterrun') {
             $result = '<div>' . $result . '</div>';
         }
 
