@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Yii\Extension\Simple\Widget\Tests;
+namespace Yii\Extension\Widget\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use RuntimeException;
-use Yii\Extension\Simple\Widget\Tests\Stubs\Immutable;
-use Yii\Extension\Simple\Widget\Tests\Stubs\Widget;
-use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetA;
-use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetB;
+use Yii\Extension\Widget\Tests\Stubs\Immutable;
+use Yii\Extension\Widget\Tests\Stubs\Widget;
+use Yii\Extension\Widget\Tests\Stubs\WidgetA;
+use Yii\Extension\Widget\Tests\Stubs\WidgetB;
 use Yiisoft\Html\Html;
 
 final class WidgetTest extends TestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yii\Extension\Simple\Widget;
+namespace Yii\Extension\Widget;
 
 use ReflectionClass;
 use ReflectionException;
@@ -19,7 +19,7 @@ use function get_class;
  *
  * This is the base class that is meant to be inherited when implementing your own widgets.
  */
-abstract class AbstractWidget
+abstract class SimpleWidget
 {
     protected array $attributes = [];
 

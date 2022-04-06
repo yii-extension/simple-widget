@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yii\Extension\Simple\Widget\Tests\Stubs;
+namespace Yii\Extension\Widget\Tests\Stubs;
 
-use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yii\Extension\Widget\SimpleWidget;
 
-class Immutable extends AbstractWidget
+final class Immutable extends SimpleWidget
 {
     private string $id = 'original';
 
