@@ -6,9 +6,9 @@ namespace Yii\Extension\Simple\Widget\Tests\Stubs;
 
 use Yii\Extension\Simple\Widget\AbstractWidget;
 
-class ImmutableWidget extends AbstractWidget
+class WidgetB extends AbstractWidget
 {
-    private string $id = 'original';
+    private string $id;
 
     protected function run(): string
     {
@@ -18,8 +18,7 @@ class ImmutableWidget extends AbstractWidget
     public function id(string $value): self
     {
         $new = clone $this;
-        $new->id = $value;
-
+        $new->attributes['id'] = $value;
         return $new;
     }
 }

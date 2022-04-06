@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace Yii\Extension\Simple\Widget\Tests\Stubs;
 
 use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yiisoft\Html\Html;
 
-class TestWidgetA extends AbstractWidget
+class WidgetA extends AbstractWidget
 {
-    private string $id;
-
     protected function run(): string
     {
-        return '<run-' . $this->id . '>';
+        return '<' . trim(html::renderTagAttributes($this->attributes)) . '>';
     }
 
     public function id(string $value): self
     {
-        $this->id = $value;
-
-        return $this;
+        $new = clone $this;
+        $new->attributes['id'] = $value;
+        return $new;
     }
 }

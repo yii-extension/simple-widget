@@ -7,60 +7,61 @@ namespace Yii\Extension\Simple\Widget\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use RuntimeException;
-use Yii\Extension\Simple\Widget\Tests\Stubs\ImmutableWidget;
-use Yii\Extension\Simple\Widget\Tests\Stubs\TestWidget;
-use Yii\Extension\Simple\Widget\Tests\Stubs\TestWidgetA;
-use Yii\Extension\Simple\Widget\Tests\Stubs\TestWidgetB;
+use Yii\Extension\Simple\Widget\Tests\Stubs\Immutable;
+use Yii\Extension\Simple\Widget\Tests\Stubs\Widget;
+use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetA;
+use Yii\Extension\Simple\Widget\Tests\Stubs\WidgetB;
 
 final class WidgetTest extends TestCase
 {
-    public function testWidget(): void
+    public function testAfterRun(): void
     {
-        $output = TestWidget::widget()->id('w0')->render();
-        $this->assertSame('<run-w0>', $output);
+        Widget::create()->id('afterrun')->begin();
+        $output = Widget::end();
+        $this->assertSame('<div><id="afterrun"></div>', $output);
     }
 
-    public function testToStringWidget(): void
+    public function testAttributes(): void
     {
-        $output = TestWidget::widget()->id('w0');
-        $this->assertSame('<run-w0>', (string) $output);
+        Widget::create()->id('id-test')->attributes(['class' => 'text-danger'])->begin();
+        $output = Widget::end();
+        $this->assertSame('<id="id-test" class="text-danger">', $output);
+    }
+
+    public function testBeforeRun(): void
+    {
+        Widget::create()->id('beforerun')->begin();
+        $output = Widget::end();
+        $this->assertEmpty($output);
     }
 
     public function testBeginEnd(): void
     {
-        TestWidgetA::widget()->id('test')->begin();
-        $output = TestWidgetA::end();
-        $this->assertSame('<run-test>', $output);
+        WidgetA::create()->id('test')->begin();
+        $output = WidgetA::end();
+        $this->assertSame('<id="test">', $output);
     }
 
-    public function testWidgetWithImmutableWidget(): void
+    public function testBeginEndStaticWithImmutableWidget(): void
     {
-        $widget = ImmutableWidget::widget()->id('new');
-        $output = $widget->render();
+        Immutable::create()->id('new')->begin();
+        $output = Immutable::end();
+
         $this->assertSame('<run-new>', $output);
     }
 
     public function testBeginEndWithImmutableWidget(): void
     {
-        $widget = ImmutableWidget::widget()->id('new');
+        $widget = Immutable::create()->id('new');
         $widget->begin();
         $output = $widget::end();
         $this->assertSame('<run-new>', $output);
     }
 
-    public function testBeginEndStaticWithImmutableWidget(): void
+    public function testCreate(): void
     {
-        ImmutableWidget::widget()->id('new')->begin();
-        $output = ImmutableWidget::end();
-
-        $this->assertSame('<run-new>', $output);
-    }
-
-    public function testStackTrackingWithImmutableWidget(): void
-    {
-        $widget = ImmutableWidget::widget();
-        $this->expectException(RuntimeException::class);
-        $widget::end();
+        $output = Widget::create()->id('w0')->render();
+        $this->assertSame('<id="w0">', $output);
     }
 
     /**
@@ -68,21 +69,9 @@ final class WidgetTest extends TestCase
      */
     public function testStackTracking(): void
     {
-        $widget = TestWidget::widget();
+        $widget = Widget::create();
         $this->expectException(RuntimeException::class);
         $widget::end();
-    }
-
-    /**
-     * @depends testBeginEnd
-     */
-    public function testStackTrackingDisorder(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $a = TestWidgetA::widget();
-        $b = TestWidgetB::widget();
-        $a::end();
-        $b::end();
     }
 
     /**
@@ -91,21 +80,51 @@ final class WidgetTest extends TestCase
     public function testStackTrackingDiferentClass(): void
     {
         $this->expectException(RuntimeException::class);
-        TestWidgetA::widget()->begin();
-        TestWidgetB::end();
+        WidgetA::create()->begin();
+        WidgetB::end();
     }
 
-    public function testBeforeRun(): void
+    /**
+     * @depends testBeginEnd
+     */
+    public function testStackTrackingDisorder(): void
     {
-        TestWidget::widget()->id('beforerun')->begin();
-        $output = TestWidget::end();
-        $this->assertEmpty($output);
+        $this->expectException(RuntimeException::class);
+        $a = WidgetA::create();
+        $b = WidgetB::create();
+        $a::end();
+        $b::end();
     }
 
-    public function testAfterRun(): void
+    public function testStackTrackingWithImmutableWidget(): void
     {
-        TestWidget::widget()->id('afterrun')->begin();
-        $output = TestWidget::end();
-        $this->assertSame('<div><run-afterrun></div>', $output);
+        $widget = Immutable::create();
+        $this->expectException(RuntimeException::class);
+        $widget::end();
+    }
+
+    public function testToStringWidget(): void
+    {
+        $output = Widget::create()->id('w0');
+        $this->assertSame('<id="w0">', (string) $output);
+    }
+
+    public function testWidgetConfig(): void
+    {
+        $output = Widget::create(['attributes()' => ['class' => 'test-class']])->id('w0');
+        $this->assertSame('<id="w0" class="test-class">', $output->render());
+    }
+
+    public function testWidgetloadConfigFile(): void
+    {
+        $output = Widget::create()->loadConfigFile(__DIR__ . '/Stubs/Config.php')->id('w0');
+        $this->assertSame('<id="w0" class="text-danger">', $output->render());
+    }
+
+    public function testWidgetWithImmutableWidget(): void
+    {
+        $widget = Immutable::create()->id('new');
+        $output = $widget->render();
+        $this->assertSame('<run-new>', $output);
     }
 }

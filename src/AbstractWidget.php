@@ -7,7 +7,9 @@ namespace Yii\Extension\Simple\Widget;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
+use Throwable;
 
+use function call_user_func_array;
 use function get_class;
 
 /**
@@ -19,6 +21,8 @@ use function get_class;
  */
 abstract class AbstractWidget
 {
+    protected array $attributes = [];
+
     /**
      * The widgets that are currently opened and not yet closed.
      * This property is maintained by {@see begin()} and {@see end()} methods.
@@ -26,6 +30,19 @@ abstract class AbstractWidget
      * @var static[]
      */
     private static array $stack;
+
+    /**
+     * The HTML attributes. The following special options are recognized.
+     *
+     * @param array $values Attribute values indexed by attribute names.
+     *
+     * @return static
+     */
+    public function attributes(array $values): static
+    {
+        $this->attributes = array_merge($this->attributes, $values);
+        return $this;
+    }
 
     /**
      * Used to open a wrapping widget (the one with begin/end).
@@ -58,14 +75,14 @@ abstract class AbstractWidget
         $class = static::class;
 
         if (empty(self::$stack)) {
-            throw new RuntimeException("Unexpected {$class}::end() call. A matching begin() is not found.");
+            throw new RuntimeException("Unexpected $class::end() call. A matching begin() is not found.");
         }
 
         $widget = array_pop(self::$stack);
         $widgetClass = get_class($widget);
 
         if ($widgetClass !== static::class) {
-            throw new RuntimeException("Expecting end() of {$widgetClass} found {$class}.");
+            throw new RuntimeException("Expecting end() of $widgetClass found $class.");
         }
 
         return $widget->render();
@@ -74,17 +91,45 @@ abstract class AbstractWidget
     /**
      * Creates a widget instance.
      *
-     * @param array<int,mixed> $constructorArguments Widget constructor arguments.
+     * @param array $config The configuration array for factory.
+     * @param array $constructorArguments The constructor arguments for the widget.
+     *
+     * @psalm-param array<int, mixed> $constructorArguments
      *
      * @throws ReflectionException
      *
      * @return static widget instance
      */
-    final public static function widget(array $constructorArguments = []): self
+    final public static function create(array $config = [], array $constructorArguments = []): static
     {
         $widget = new ReflectionClass(static::class);
         $widget = $widget->newInstanceArgs($constructorArguments);
 
+        if ($config !== []) {
+            /** @psalm-var static $widget */
+            $widget = self::configure($widget, $config);
+        }
+
+        return $widget;
+    }
+
+    /**
+     * @psalm-suppress UnresolvableInclude
+     */
+    public function loadConfigFile(string $path): static
+    {
+        $widget = $this;
+
+        try {
+            /** @var mixed */
+            $file = require $path;
+            $config = is_array($file) ? $file : [];
+            $widget = self::configure($widget, $config);
+        } catch (Throwable $e) {
+            throw new RuntimeException("Unable to load configuration file '$path'.");
+        }
+
+        /** @var static */
         return $widget;
     }
 
@@ -164,5 +209,32 @@ abstract class AbstractWidget
     final public function __toString(): string
     {
         return $this->render();
+    }
+
+    /**
+     * Configures a widget with the given configuration.
+     *
+     * @param object $widget The widget to be configured.
+     * @param array $config The methods to be called.
+     *
+     * @return object The widget itself.
+     */
+    private static function configure(object $widget, array $config): object
+    {
+        $setter = '';
+
+        /**
+         * @var array<string, mixed> $config
+         * @var mixed $arguments
+         */
+        foreach ($config as $action => $arguments) {
+            if (str_ends_with($action, '()')) {
+                // method call
+                /** @var mixed */
+                $setter = call_user_func_array([$widget, substr($action, 0, -2)], [$arguments]);
+            }
+        }
+
+        return $setter instanceof static ? $setter : $widget;
     }
 }
