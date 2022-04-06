@@ -21,12 +21,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yii\\Extension\\Simple\\Widget\\": "src"
+            "Yii\\Extension\\Widget\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yii\\Extension\\Simple\\Widget\\Tests\\": "tests"
+            "Yii\\Extension\\Widget\\Tests\\": "tests"
         }
     },
     "extra": {

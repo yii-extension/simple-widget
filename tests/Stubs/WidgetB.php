@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yii\Extension\Simple\Widget\Tests\Stubs;
+namespace Yii\Extension\Widget\Tests\Stubs;
 
-use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yii\Extension\Widget\SimpleWidget;
 
-class WidgetB extends AbstractWidget
+class WidgetB extends SimpleWidget
 {
     private string $id;
 
