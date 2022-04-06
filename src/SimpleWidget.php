@@ -82,7 +82,7 @@ abstract class SimpleWidget
             $config = is_array($file) ? $file : [];
             $widget = self::configure($widget, $config);
         } catch (Throwable $e) {
-            throw new RuntimeException("Unable to load configuration file '$path'.");
+            throw new RuntimeException("Unable to load configuration file $path.");
         }
 
         /** @var static */

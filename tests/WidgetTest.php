@@ -78,6 +78,9 @@ final class WidgetTest extends TestCase
     {
         $widget = Widget::create();
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Unexpected Yii\Extension\Widget\Tests\Stubs\Widget::end() call. A matching begin() is not found.'
+        );
         $widget::end();
     }
 
@@ -87,6 +90,9 @@ final class WidgetTest extends TestCase
     public function testStackTrackingDiferentClass(): void
     {
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Expecting end() of Yii\Extension\Widget\Tests\Stubs\WidgetA found Yii\Extension\Widget\Tests\Stubs\WidgetB.'
+        );
         WidgetA::create()->begin();
         WidgetB::end();
     }
@@ -97,6 +103,9 @@ final class WidgetTest extends TestCase
     public function testStackTrackingDisorder(): void
     {
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Unexpected Yii\Extension\Widget\Tests\Stubs\WidgetA::end() call. A matching begin() is not found.'
+        );
         $a = WidgetA::create();
         $b = WidgetB::create();
         $a::end();
@@ -107,6 +116,9 @@ final class WidgetTest extends TestCase
     {
         $widget = Immutable::create();
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Unexpected Yii\Extension\Widget\Tests\Stubs\Immutable::end() call. A matching begin() is not found.'
+        );
         $widget::end();
     }
 
@@ -128,10 +140,17 @@ final class WidgetTest extends TestCase
         $this->assertSame('<id="w0" class="test-class">', $output->render());
     }
 
-    public function testWidgetloadConfigFile(): void
+    public function testWidgetLoadConfigFile(): void
     {
         $output = Widget::create()->loadConfigFile(__DIR__ . '/Stubs/Config.php')->id('w0');
         $this->assertSame('<id="w0" class="text-danger">', $output->render());
+    }
+
+    public function testWidgetLoadConfigFileException(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to load configuration file noExist.');
+        Widget::create()->loadConfigFile('noExist');
     }
 
     public function testWidgetWithConstructor(): void
