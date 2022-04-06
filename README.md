@@ -92,7 +92,7 @@ Using widget in view with config factory:
 declare(strict_types=1);
 ?>
 
-Widget::create(['attributes()' => ['class' => 'test-class'], 'id()' => 'id-tests'])->render();
+Widget::create(['attributes()' => [['class' => 'test-class']], 'id()' => ['id-tests']])->render();
 ```
 
 Code generated:
@@ -163,7 +163,7 @@ declare(strict_types=1);
 
 use App\Widget;
 
-Widget::create(['attributes()' => ['class' => 'test-class']], [new Html()])->id('w0')->render();
+Widget::create(['attributes()' => [['class' => 'test-class']]], [new Html()])->id('w0')->render();
 ```
 
 Code generated:

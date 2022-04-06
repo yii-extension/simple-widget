@@ -112,7 +112,13 @@ final class WidgetTest extends TestCase
 
     public function testWidgetConfig(): void
     {
-        $output = Widget::create(['attributes()' => ['class' => 'test-class']])->id('w0');
+        $output = Widget::create(['attributes()' => [['class' => 'test-class']]])->id('w0');
+        $this->assertSame('<id="w0" class="test-class">', $output->render());
+    }
+
+    public function testWidgetConfigWithArguments(): void
+    {
+        $output = Widget::create(['addAttribute()' => ['class', 'test-class']])->id('w0');
         $this->assertSame('<id="w0" class="test-class">', $output->render());
     }
 
@@ -124,7 +130,7 @@ final class WidgetTest extends TestCase
 
     public function testWidgetWithConstructor(): void
     {
-        $output = Widget::create(['attributes()' => ['class' => 'test-class']], [new Html()])->id('w0');
+        $output = Widget::create(['attributes()' => [['class' => 'test-class']]], [new Html()])->id('w0');
         $this->assertSame('<id="w0" class="test-class">', $output->render());
     }
 
