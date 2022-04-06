@@ -22,7 +22,8 @@ composer require simple-widget
 
 ## Usage
 
-Create a new widget:
+Create a new widget without dependencies:
+
 ```php
 <?php
 
@@ -120,6 +121,54 @@ Widget::create()->loadConfigFile(__DIR__ . '/config/config.php')->render();
 Code generated:
 ```html
 <id="id-tests" class="test-class">
+```
+
+Create a new widget with dependencies:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Widget;
+
+use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yiisoft\Html\Html;
+
+final class Widget extends AbstractWidget
+{
+    public function __construct(private HTML $html)
+    {
+    }
+
+    protected function run(): string
+    {
+        return '<' . trim($this->html->renderTagAttributes($this->attributes)) . '>';
+    }
+
+    public function id(string $value): self
+    {
+        $new = clone $this;
+        $new->attributes['id'] = $value;
+        return $new;
+    }
+}
+```
+
+Using widget in view with depedencie injection:
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Widget;
+
+Widget::create(['attributes()' => ['class' => 'test-class']], [new Html()])->id('w0')->render();
+```
+
+Code generated:
+```html
+<id="w0" class="test-class">
 ```
 
 ### Unit testing

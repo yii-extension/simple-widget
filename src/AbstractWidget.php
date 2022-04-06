@@ -23,6 +23,10 @@ abstract class AbstractWidget
 {
     protected array $attributes = [];
 
+    public function __construct()
+    {
+    }
+
     /**
      * The widgets that are currently opened and not yet closed.
      * This property is maintained by {@see begin()} and {@see end()} methods.
