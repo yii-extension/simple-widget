@@ -225,8 +225,6 @@ abstract class SimpleWidget
      */
     private static function configure(object $widget, array $config): object
     {
-        $setter = '';
-
         /**
          * @var array<string, mixed> $config
          * @var mixed $arguments
@@ -236,9 +234,14 @@ abstract class SimpleWidget
                 // method call
                 /** @var mixed */
                 $setter = call_user_func_array([$widget, substr($action, 0, -2)], $arguments);
+
+                if ($setter instanceof $widget) {
+                    /** @var object */
+                    $widget = $setter;
+                }
             }
         }
 
-        return $setter instanceof static ? $setter : $widget;
+        return $widget;
     }
 }
