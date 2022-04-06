@@ -65,6 +65,12 @@ final class WidgetTest extends TestCase
         $this->assertSame('<id="w0">', $output);
     }
 
+    public function testImmutability(): void
+    {
+        $widget = Widget::create();
+        $this->assertNotSame($widget, $widget->attributes([]));
+    }
+
     /**
      * @depends testBeginEnd
      */
