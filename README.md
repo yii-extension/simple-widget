@@ -2,7 +2,7 @@
     <a href="https://github.com/yii-extension" target="_blank">
         <img src="https://lh3.googleusercontent.com/ehSTPnXqrkk0M3U-UPCjC0fty9K6lgykK2WOUA2nUHp8gIkRjeTN8z8SABlkvcvR-9PIrboxIvPGujPgWebLQeHHgX7yLUoxFSduiZrTog6WoZLiAvqcTR1QTPVRmns2tYjACpp7EQ=w2400" height="100px">
     </a>
-    <h1 align="center">Simple widget for Yii3.</h1>
+    <h1 align="center">Simple widget for YiiFramework</h1>
     <br>
 </p>
 
@@ -14,11 +14,112 @@
 [![type-coverage](https://shepherd.dev/github/yii-extension/simple-widget/coverage.svg)](https://shepherd.dev/github/yii-extension/simple-widget)
 
 
-
 ## Installation
 
 ```shell
 composer require simple-widget
+```
+
+## Usage
+
+Create a new widget:
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Widget;
+
+use Yii\Extension\Simple\Widget\AbstractWidget;
+use Yiisoft\Html\Html;
+
+final class Widget extends AbstractWidget
+{
+    protected function run(): string
+    {
+        return '<' . trim(html::renderTagAttributes($this->attributes)) . '>';
+    }
+
+    public function id(string $value): self
+    {
+        $new = clone $this;
+        $new->attributes['id'] = $value;
+        return $new;
+    }
+
+    protected function beforeRun(): bool
+    {
+        if (isset($this->attributes['id']) && $this->attributes['id'] === 'beforerun') {
+            return false;
+        }
+
+        return parent::beforeRun();
+    }
+
+    protected function afterRun(string $result): string
+    {
+        $result = parent::afterRun($result);
+
+        if (isset($this->attributes['id']) && $this->attributes['id'] === 'afterrun') {
+            $result = '<div>' . $result . '</div>';
+        }
+
+        return $result;
+    }
+}
+```
+
+Using widget in view:
+```php
+<?php
+
+declare(strict_types=1);
+?>
+
+Widget::create()->id('id-test')->attributes(['class' => 'text-danger'])->render();
+```
+
+Code generated:
+```html
+<id="id-test" class="text-danger">
+```
+
+Using widget in view with config factory:
+```php
+<?php
+
+declare(strict_types=1);
+?>
+
+Widget::create(['attributes()' => ['class' => 'test-class'], 'id()' => 'id-tests'])->render();
+```
+
+Code generated:
+```html
+<id="id-tests" class="test-class">
+```
+
+Load config from file: `config.php`
+```php
+return [
+    'attributes()' => ['class' => 'test-class'],
+    'id()' => 'id-tests',
+];
+```
+
+Using widget in view with load config field:
+```php
+<?php
+
+declare(strict_types=1);
+?>
+
+Widget::create()->loadConfigFile(__DIR__ . '/config/config.php')->render();
+```
+
+Code generated:
+```html
+<id="id-tests" class="test-class">
 ```
 
 ### Unit testing
@@ -34,7 +135,7 @@ The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
 
 ```shell
-./vendor/bin/infection
+./vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered
 ```
 
 ## Static analysis
