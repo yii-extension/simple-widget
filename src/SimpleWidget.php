@@ -176,7 +176,6 @@ abstract class SimpleWidget
         return $result;
     }
 
-
     /**
      * This method is invoked right before the widget is executed.
      *

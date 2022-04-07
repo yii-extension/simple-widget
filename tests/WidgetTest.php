@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yii\Extension\Widget\Tests;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use RuntimeException;
 use Yii\Extension\Widget\Tests\Stubs\Immutable;
 use Yii\Extension\Widget\Tests\Stubs\Widget;
