@@ -231,7 +231,7 @@ abstract class SimpleWidget
 
         if (file_exists($path)) {
             /** @var mixed */
-            $file = include_once $path;
+            $file = include $path;
             /** @var array */
             $definitions = isset($file[$shortName]) && is_array($file[$shortName]) ? $file[$shortName] : [];
             $config = array_merge($definitions, $config);
