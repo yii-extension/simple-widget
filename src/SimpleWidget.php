@@ -120,6 +120,7 @@ abstract class SimpleWidget
         $reflection = new ReflectionClass(static::class);
         $shortName = $reflection->getShortName();
         $widget = $reflection->newInstanceArgs($constructorArguments);
+        /** @var static */
         return self::configure($widget, $config, $shortName);
     }
 
@@ -215,17 +216,25 @@ abstract class SimpleWidget
      *
      * @param object $widget The widget to be configured.
      * @param array $config The methods to be called.
-     * @param array $shortName The short name widget.
+     * @param string $shortName The short name widget.
      *
      * @return object The widget itself.
      */
     private static function configure(object $widget, array $config, string $shortName = ''): object
     {
+        /** @var string */
         $path = './config/widget-definitions.php';
 
+        if (defined('WIDGET_CONFIG_PATH')) {
+            $path = WIDGET_CONFIG_PATH . '/widget-definitions.php';
+        }
+
         if (file_exists($path)) {
+            /** @var mixed */
             $file = include_once $path;
-            $config = array_merge($file[$shortName] ?? [], $config);
+            /** @var array */
+            $definitions = isset($file[$shortName]) && is_array($file[$shortName]) ? $file[$shortName] : [];
+            $config = array_merge($definitions, $config);
         }
 
         /**

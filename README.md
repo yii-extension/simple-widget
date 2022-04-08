@@ -22,7 +22,7 @@ composer require simple-widget
 
 ## Usage
 
-Create a new widget without dependencies:
+### Create a new widget without dependencies:
 
 ```php
 <?php
@@ -70,7 +70,8 @@ final class Widget extends AbstractWidget
 }
 ```
 
-Using widget in view:
+Using in view:
+
 ```php
 <?php
 
@@ -81,11 +82,13 @@ Widget::create()->id('id-test')->attributes(['class' => 'text-danger'])->render(
 ```
 
 Code generated:
+
 ```html
 <id="id-test" class="text-danger">
 ```
 
-Using widget in view with config factory:
+### Using widget in view with config factory:
+
 ```php
 <?php
 
@@ -96,11 +99,15 @@ Widget::create(['attributes()' => [['class' => 'test-class']], 'id()' => ['id-te
 ```
 
 Code generated:
+
 ```html
 <id="id-tests" class="test-class">
 ```
 
-Load config from file: `config.php`
+### Using widget in view with config file:
+
+Load config from file: `/config/widget-definitions.php`:
+
 ```php
 return [
     'attributes()' => ['class' => 'test-class'],
@@ -108,14 +115,13 @@ return [
 ];
 ```
 
-Using widget in view with load config field:
 ```php
 <?php
 
 declare(strict_types=1);
 ?>
 
-Widget::create()->loadConfigFile(__DIR__ . '/config/config.php')->render();
+Widget::create()->loadConfigFile(__DIR__ . '/config/widget-definitions.php')->render();
 ```
 
 Code generated:
@@ -123,7 +129,7 @@ Code generated:
 <id="id-tests" class="test-class">
 ```
 
-Create a new widget with dependencies:
+### Create a new widget with depedencie injection:
 
 ```php
 <?php
@@ -155,7 +161,8 @@ final class Widget extends AbstractWidget
 }
 ```
 
-Using widget in view with depedencie injection:
+Using view:
+
 ```php
 <?php
 
@@ -169,6 +176,30 @@ Widget::create(['attributes()' => [['class' => 'test-class']]], [new Html()])->i
 Code generated:
 ```html
 <id="w0" class="test-class">
+```
+
+### Using widget load config file with `CONSTANT`:
+
+Defined `CONSTANT`: `WIDGET_CONFIG_PATH` for example:
+
+```php
+define('WIDGET_CONFIG_PATH', __DIR__ . '/config');
+```
+
+Create file `/config/widget-definitions.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    // Sintax for array shortNameWidget => [method() => [$value]
+    'Widget' => [
+        'attributes()' => [['class' => 'test-class']],
+        'id()' => ['id-tests'],
+    ],
+];
 ```
 
 ### Unit testing

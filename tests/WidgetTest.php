@@ -141,7 +141,14 @@ final class WidgetTest extends TestCase
 
     public function testWidgetLoadConfigFile(): void
     {
-        $output = Widget::create()->loadConfigFile(__DIR__ . '/Stubs/Config.php')->id('w0');
+        $output = Widget::create()->loadConfigFile(__DIR__ . '/Stubs/config.php')->id('w0');
+        $this->assertSame('<id="w0" class="text-danger">', $output->render());
+    }
+
+    public function testWidgetLoadConfigFileWithConstant(): void
+    {
+        define('WIDGET_CONFIG_PATH', __DIR__ . '/Stubs');
+        $output = Widget::create()->id('w0');
         $this->assertSame('<id="w0" class="text-danger">', $output->render());
     }
 
