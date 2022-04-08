@@ -117,15 +117,10 @@ abstract class SimpleWidget
      */
     final public static function create(array $config = [], array $constructorArguments = []): static
     {
-        $widget = new ReflectionClass(static::class);
-        $widget = $widget->newInstanceArgs($constructorArguments);
-
-        if ($config !== []) {
-            /** @psalm-var static $widget */
-            $widget = self::configure($widget, $config);
-        }
-
-        return $widget;
+        $reflection = new ReflectionClass(static::class);
+        $shortName = $reflection->getShortName();
+        $widget = $reflection->newInstanceArgs($constructorArguments);
+        return self::configure($widget, $config, $shortName);
     }
 
     /**
@@ -220,18 +215,25 @@ abstract class SimpleWidget
      *
      * @param object $widget The widget to be configured.
      * @param array $config The methods to be called.
+     * @param array $shortName The short name widget.
      *
      * @return object The widget itself.
      */
-    private static function configure(object $widget, array $config): object
+    private static function configure(object $widget, array $config, string $shortName = ''): object
     {
+        $path = './config/widget-definitions.php';
+
+        if (file_exists($path)) {
+            $file = include_once $path;
+            $config = array_merge($file[$shortName] ?? [], $config);
+        }
+
         /**
          * @var array<string, mixed> $config
          * @var mixed $arguments
          */
         foreach ($config as $action => $arguments) {
             if (str_ends_with($action, '()')) {
-                // method call
                 /** @var mixed */
                 $setter = call_user_func_array([$widget, substr($action, 0, -2)], $arguments);
 
