@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      extensions: runkit7
+      extensions: runkit7-4.0.0a3
 
     strategy:
       matrix:
