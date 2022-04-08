@@ -10,6 +10,9 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    env:
+      extensions: runkit7-4.0.0-alpha
+
     strategy:
       matrix:
         os:
@@ -28,9 +31,10 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: ${{ env.extensions }}
           ini-values: date.timezone='UTC'
           coverage: pcov
-          tools: composer:v2
+          tools: composer:v2, pecl
 
       - name: Determine composer cache directory on Linux
         if: matrix.os == 'ubuntu-latest'
