@@ -12,6 +12,9 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    env:
+      extensions: runkit7
+
     strategy:
       matrix:
         os:
@@ -29,6 +32,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
+          extensions: ${{ env.extensions }}
           coverage: pcov
           tools: composer:v2
 

@@ -149,10 +149,6 @@ final class WidgetTest extends TestCase
 
     public function testWidgetLoadConfigFileWithConstant(): void
     {
-        if (!extension_loaded('runkit7')) {
-            $this->markTestSkipped('This test requires the runkit extension.');
-        }
-
         define('WIDGET_CONFIG_PATH', __DIR__ . '/Stubs');
         $output = Widget::create()->id('w0');
         $this->assertSame('<id="w0" class="text-danger">', $output->render());
