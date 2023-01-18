@@ -17,7 +17,7 @@
         "phpunit/phpunit": "^9.5",
         "roave/infection-static-analysis-plugin": "^1.7",
         "vimeo/psalm": "^4.6",
-        "yiisoft/html": "^2.0"
+        "yiisoft/html": "^3.1"
     },
     "autoload": {
         "psr-4": {
